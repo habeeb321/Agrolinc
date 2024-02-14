@@ -1,13 +1,14 @@
+import 'package:agrolinc/view_model/auth_controller.dart';
 import 'package:agrolinc/views/auth/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/instance_manager.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends GetView<AuthController> {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(AuthController());
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -36,6 +37,7 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: Get.height * 0.05),
             TextField(
+              controller: controller.mobileControllerLogin,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.phone),
                 border: OutlineInputBorder(
@@ -46,35 +48,31 @@ class LoginScreen extends StatelessWidget {
                 prefixIconColor: const Color(0xff20A479),
               ),
             ),
-            SizedBox(height: Get.height * 0.02),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock_outline),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(color: Colors.green),
-                ),
-                labelText: 'Password',
-                prefixIconColor: const Color(0xff20A479),
-              ),
-            ),
             SizedBox(height: Get.height * 0.05),
-            SizedBox(
-              height: 50,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0xff41AC1D)),
-                ),
-                child: const Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
+            controller.loading.value
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.orange,
+                      strokeWidth: 4,
+                    ),
+                  )
+                : SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        controller.fetchLogin();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(const Color(0xff41AC1D)),
+                      ),
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
             const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

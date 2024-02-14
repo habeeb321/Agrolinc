@@ -1,12 +1,16 @@
+import 'package:agrolinc/view_model/auth_controller.dart';
 import 'package:agrolinc/views/auth/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends GetView<AuthController> {
   const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(AuthController());
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -23,6 +27,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: Get.height * 0.05),
             TextField(
+              controller: controller.nameController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
@@ -35,7 +40,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: Get.height * 0.02),
             TextField(
-              obscureText: true,
+              controller: controller.mobileControllerRegister,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.phone_outlined),
                 border: OutlineInputBorder(
@@ -48,7 +53,7 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: Get.height * 0.02),
             TextField(
-              obscureText: true,
+              controller: controller.emailController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.mail_outline),
                 border: OutlineInputBorder(
@@ -60,21 +65,30 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: Get.height * 0.05),
-            SizedBox(
-              height: 50,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0xff41AC1D)),
-                ),
-                child: const Text(
-                  'Register',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
+            controller.loading.value
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.orange,
+                      strokeWidth: 4,
+                    ),
+                  )
+                : SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        controller.fetchRegister();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(const Color(0xff41AC1D)),
+                      ),
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
             const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

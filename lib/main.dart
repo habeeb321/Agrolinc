@@ -2,7 +2,7 @@ import 'package:agrolinc/views/auth/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 

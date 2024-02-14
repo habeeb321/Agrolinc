@@ -1,10 +1,9 @@
 import 'dart:convert';
-
-import 'package:agrolinc/model/login_model.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static Future<String?> getRegister({name, email, mobile}) async {
+  static Future<Map<String, dynamic>?> getRegister(
+      {name, email, mobile}) async {
     try {
       Uri url = Uri.parse('https://www.api.agrolinc.in/api/register');
       var response = await http.post(url,
@@ -17,7 +16,7 @@ class ApiService {
           }));
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> result = jsonDecode(response.body);
-        return result['msg'];
+        return result;
       }
     } catch (e) {
       print(e);
@@ -25,7 +24,7 @@ class ApiService {
     return null;
   }
 
-  static Future<LoginModel?> getLogin({mobile}) async {
+  static Future<Map<String, dynamic>?> getLogin({mobile}) async {
     try {
       Uri url = Uri.parse('https://www.api.agrolinc.in/api/login');
       var response = await http.post(url,
@@ -35,7 +34,7 @@ class ApiService {
           }));
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> result = jsonDecode(response.body);
-        return LoginModel.fromJson(result);
+        return result;
       }
     } catch (e) {
       print(e);

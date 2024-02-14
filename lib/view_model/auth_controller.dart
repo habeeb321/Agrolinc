@@ -1,9 +1,9 @@
-import 'package:agrolinc/model/login_model.dart';
 import 'package:agrolinc/repository/api_service.dart';
 import 'package:agrolinc/views/auth/otp_screen.dart';
 import 'package:agrolinc/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AuthController extends GetxController {
   TextEditingController nameController = TextEditingController();
@@ -13,52 +13,43 @@ class AuthController extends GetxController {
   TextEditingController otpController = TextEditingController();
 
   final loading = false.obs;
-  LoginModel? loginModel;
+  final box = GetStorage();
 
   fetchRegister() async {
     loading.value = true;
-    String? result = await ApiService.getRegister(
+    Map<String, dynamic>? result = await ApiService.getRegister(
       name: nameController.text,
       mobile: mobileControllerRegister.text,
       email: emailController.text,
     );
-    if (result == "Registered successfully") {
-      Get.offAll(() => const HomeScreen());
-    } else if (result == "Email already registered!") {
-      Get.snackbar(
-        'Error',
-        'Email already registered!',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } else {
-      Get.snackbar(
-        'Error',
-        "Please send name, mobile, role, and emailId!",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+    if (result != null) {
+      if (result['status'] == true) {
+        Get.offAll(() => const HomeScreen());
+      } else {
+        Get.snackbar(
+          'Error',
+          "${result['msg']}",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     }
+
     loading.value = false;
   }
 
   fetchLogin() async {
     loading.value = true;
-    LoginModel? result =
+    Map<String, dynamic>? result =
         await ApiService.getLogin(mobile: mobileControllerLogin.text);
     if (result != null) {
-      loginModel = result;
+      box.write('userId', result['userId']);
       update();
-      if (result.status == true) {
+      if (result['status'] == true) {
         Get.offAll(() => const OtpScreen());
-      } else if (result.msg == "Mobile number not registered!") {
-        Get.snackbar(
-          'Error',
-          "Mobile number not registered!",
-          snackPosition: SnackPosition.BOTTOM,
-        );
       } else {
         Get.snackbar(
           'Error',
-          "Please provide mobile number!",
+          "${result['msg']}",
           snackPosition: SnackPosition.BOTTOM,
         );
       }
@@ -68,8 +59,9 @@ class AuthController extends GetxController {
 
   fetchOtp() async {
     loading.value = true;
-    Map<String, dynamic>? result = await ApiService.getOtp(
-        otp: otpController.text, userId: loginModel?.userId ?? 0);
+    var userId = box.read('userId');
+    Map<String, dynamic>? result =
+        await ApiService.getOtp(otp: otpController.text, userId: userId);
     if (result != null) {
       if (result['status'] == true) {
         Get.offAll(() => const HomeScreen());

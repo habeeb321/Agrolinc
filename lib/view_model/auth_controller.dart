@@ -1,5 +1,6 @@
 import 'package:agrolinc/model/login_model.dart';
 import 'package:agrolinc/repository/api_service.dart';
+import 'package:agrolinc/views/auth/otp_screen.dart';
 import 'package:agrolinc/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ class AuthController extends GetxController {
   TextEditingController mobileControllerRegister = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController mobileControllerLogin = TextEditingController();
+  TextEditingController otpController = TextEditingController();
 
   final loading = false.obs;
   LoginModel? loginModel;
@@ -46,7 +48,7 @@ class AuthController extends GetxController {
       loginModel = result;
       update();
       if (result.status == true) {
-        Get.offAll(() => const HomeScreen());
+        Get.offAll(() => const OtpScreen());
       } else if (result.msg == "Mobile number not registered!") {
         Get.snackbar(
           'Error',
@@ -57,6 +59,24 @@ class AuthController extends GetxController {
         Get.snackbar(
           'Error',
           "Please provide mobile number!",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    }
+    loading.value = false;
+  }
+
+  fetchOtp() async {
+    loading.value = true;
+    Map<String, dynamic>? result = await ApiService.getOtp(
+        otp: otpController.text, userId: loginModel?.userId ?? 0);
+    if (result != null) {
+      if (result['status'] == true) {
+        Get.offAll(() => const HomeScreen());
+      } else {
+        Get.snackbar(
+          'Error',
+          "${result['msg']}",
           snackPosition: SnackPosition.BOTTOM,
         );
       }

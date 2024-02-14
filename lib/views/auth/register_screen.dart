@@ -12,6 +12,7 @@ class RegisterScreen extends GetView<AuthController> {
   Widget build(BuildContext context) {
     Get.put(AuthController());
     return Scaffold(
+      backgroundColor: const Color(0xffB7DACA),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
